@@ -1,9 +1,44 @@
 <html>
 <head>
 	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>test</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
+
+    <!-- メニューバー -->
+    <div class="container">
+        <!-- Static navbar -->
+        <div class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./main.html">Second Screen Session</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./main.html">Home</a></li>
+                    <li class="active"><a href="./drum.html">Drum</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+
+
 	<h2>test page</h2>
 
     <p>
@@ -14,10 +49,10 @@
     </p>
 
     <div id="sound-buttons">
-        <img id="sounds-hh" src="http://dummyimage.com/200x150/eee/0010ee&text=Hi-hat">
-        <img id="sounds-sd" src="http://dummyimage.com/200x150/eee/0010ee&text=Snare+Drum">
-        <img id="sounds-bd" src="http://dummyimage.com/200x150/eee/0010ee&text=Bass+Drum">
-        <img id="sounds-cy" src="http://dummyimage.com/200x150/eee/0010ee&text=Cymbal">
+        <img class="col-xs-6 col-md-4" id="sounds-hh" src="http://dummyimage.com/200x150/eee/0010ee&text=Hi-hat">
+        <img class="col-xs-6 col-md-4" id="sounds-sd" src="http://dummyimage.com/200x150/eee/0010ee&text=Snare+Drum">
+        <img class="col-xs-6 col-md-4" id="sounds-bd" src="http://dummyimage.com/200x150/eee/0010ee&text=Bass+Drum">
+        <img class="col-xs-6 col-md-4" id="sounds-cy" src="http://dummyimage.com/200x150/eee/0010ee&text=Cymbal">
     </div>
 
     <div id="history">
@@ -26,6 +61,7 @@
     </div>
 
     <script src="./js/jquery-2.0.3.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
 	<script src="https://skyway.io/dist/0.3/peer.js"></script>
 	<script src="./js/script.js"></script>
 </body>
