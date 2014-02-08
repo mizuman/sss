@@ -1,3 +1,28 @@
+
+// CONFIG OPTIONS START
+
+var accuracy = 8; // 1 = crotchet, 2 = quaver, 4 = semi-quaver, 8 = demi-semi-quaver
+var bpm = 100; // beats per minute
+var muted = ['']; // List muted (silent) instruments
+
+// CONFIG OPTIONS END
+
+// Audio speed settings
+var count = 0;
+var bps = bpm / 60; // beats per second
+var interval = (1000 / bps / accuracy) >> 0; // seconds per beat
+var multiplier = interval * accuracy;
+var timer;
+var countdown;
+
+var currentBeat = {};
+var lag = 0; // Time lag across the network
+var isSession = false;
+
+// for measurement transfer lag
+var HBStartTime;
+var lagList = {};
+
 // Compatibility
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -41,41 +66,43 @@ peer.on('error', function(err){
 });
 
 function connect(peerid){
-    var conn = peer.connect( $('#contactlist').val(), {"serialization": "json"} );
-    dataChannelEvent(conn);
+
+    for(var i=0; i<chatList.length && chatList[i] != peerid; i++);
+
+    if(i==chatList.length) {
+        var conn = peer.connect( $('#contactlist').val(), {"serialization": "json"} );
+        dataChannelEvent(conn);
+        $('#session-info').hide();
+    }
+      
+
 }
 
 // Audio contextを生成
 var audioContext = new AudioContext();
-var buffers = [];
+var buffers = {};
+var instruments = ['bd', 'sd', 'hh', 'cy'];
 var req = new XMLHttpRequest();
 var loadidx = 0;
-var files = [
-    "samples/bd.wav",
-    "samples/sd.wav",
-    "samples/hh.wav",
-    "samples/cy.wav"
-];
 
 // タッチサポートの判定
 var SUPPORTS_TOUCH = 'createTouch' in document;
 var mouse_down = (SUPPORTS_TOUCH ? 'ontouchstart' : 'onmousedown');
 
 // UI要素の準備
-// var beep = document.getElementById('beep');
 var soundsHh = document.getElementById('sounds-hh');
 var soundsSd = document.getElementById('sounds-sd');
 var soundsBd = document.getElementById('sounds-bd');
 var soundsCy = document.getElementById('sounds-cy');
 
 function LoadBuffers() {
-    req.open("GET", files[loadidx], true);
+    req.open("GET", 'samples/' + instruments[loadidx] + '.wav', true);
     req.responseType = "arraybuffer";
     req.onload = function() {
         if(req.response) {
             audioContext.decodeAudioData(req.response,function(b){
-                buffers[loadidx]=b;
-                if(++loadidx < files.length)
+                buffers[instruments[loadidx]] = b;
+                if(++loadidx < instruments.length)
                     LoadBuffers();
             },function(){});
         }
@@ -88,7 +115,7 @@ function getUserList () {
     $.get('https://skyway.io/active/list/'+APIKEY,
         function(list){
             for(var cnt = 0;cnt < list.length;cnt++){
-                if($.inArray(list[cnt],userList)<0 && list[cnt] != peer.id){
+                if($.inArray(list[cnt],userList)<0 && list[cnt] != peer.id && list[cnt].search('host') == 0){
                     userList.push(list[cnt]);
                     $('#contactlist').append($('<option>', {"value":list[cnt],"text":list[cnt]}));
                 }
@@ -97,17 +124,20 @@ function getUserList () {
     );
 }
 
-function sendMsg(type, message, recipient) {
+function sendMsg(type, message, instruments, key) {
+
 	var data = {
 		type: type,
 		user: userName,
-		text: message
+		text: message,
+        inst: instruments,
+        key : key
 	};
 
     for(var i = 0; i < peerConn.length; i++){
     	peerConn[i].send(data);
     }
-    console.log(data);
+    // console.log(data);
 }
 
 function makeSounds(buffer){
@@ -117,15 +147,103 @@ function makeSounds(buffer){
     source.start(0);
 }
 
-function playSounds(sounds){
-    if(sounds == 'Hi-hat') makeSounds(buffers[0]);
-    else if (sounds == 'Snare Drum') makeSounds(buffers[1]);
-    else if (sounds == 'Bass Drum') makeSounds(buffers[2]);
-    else if (sounds == 'Cymbal') makeSounds(buffers[3]);
+function playSound(note) {
+    // Play sound if instrument is not muted
+    if (muted.indexOf(note.key) < 0) {
+        makeSounds(buffers[note.key]);
+    }
 }
 
+// 音楽に合わせて音を出すべきか
+function checkSound() {
+    if (drum.length < 1) {
+        endMusic();
+    } else if (drum[0].time * multiplier === count) {
+        currentBeat = drum.shift();
+        if ( currentBeat === null) endMusic();
+        else currentBeat.data.forEach(playSound);
+    }
+    count = count + interval;
+}
+
+function endMusic() {
+    isSession = false;
+    window.clearInterval(timer);
+}
+
+function startMusic() {
+    // 音楽用のタイマー
+    timer = window.setInterval(checkSound, interval);
+    checkSound();
+    isSession = true;
+}
+
+
 function setPlayerList(player){
-    playerList[playerList.length] = player;
+    for(var i=0; i < playerList.length && playerList[i] != player ; i++);
+    if(i == playerList.length) playerList[playerList.length] = player;
+    $('#session').append(player);
+
+    if(playerList.length == chatList.length) {
+        console.log("all mens ready!");
+        heartBeat();
+        clearTimeout(countdown);
+        startMusic();
+    }
+}
+
+function heartBeat(){
+    if(lagList) console.log(lagList);
+    HBStartTime = new Date();
+    for(var i = 0; i < peerConn.length; i++){
+        peerConn[i].send({type:'info',text:'heartbeat'});
+    }
+}
+
+function getTransferLag(data){
+    var HBEndTime = new Date();
+    var lag = HBEndTime - HBStartTime;
+
+    lagList[data.user] = lag/2;
+
+    // console.log('Transfer lag time : ' + data.user + ' ' + lag/2 + 'ms');
+}
+
+function showTiming(isGood) {
+    if (isGood) {
+        $('#history ul').prepend('<li>Great!</li>');
+    } else {
+        $('#history ul').prepend('<li>Oops</li>');
+    }
+}
+
+function checkAccuracy(data) {
+    var soundTime = count; // - lag; // lagList.peerid; 
+    var nextBeat = drum[0];
+    
+    if (soundTime - currentBeat.time * multiplier < nextBeat.time * multiplier - soundTime) {
+        // currentBeat is closest, i.e. user is late
+        for (var i = 0, len = currentBeat.data.length; i < len; i++) {
+            if (currentBeat.data[i].key === data.key) {
+                if (soundTime - currentBeat.time * multiplier < interval) {
+                    showTiming(true);
+                } else {
+                    showTiming(false);
+                }
+            }
+        }
+    } else {
+        // nextBeat is closest, i.e. user is early
+        for (var i = 0, len = nextBeat.data.length; i < len; i++) {
+            if (nextBeat.data[i].key === data.key) {
+                if (nextBeat.time * multiplier - soundTime < interval) {
+                    showTiming(true);
+                } else {
+                    showTiming(false);
+                }
+            }
+        }
+    }
 }
 
 function dataChannelEvent(conn){
@@ -134,17 +252,26 @@ function dataChannelEvent(conn){
     $("#sound-buttons").show();
     $("#session-call").show();
 
+    chatList[chatList.length] = conn.peer;
+
 
     // for(var i = 0; i < peerConn.length; i++){
-        peerConn[peerConn.length-1].on('data', function(data){
-            console.log(data);
-            if(data.type == 'sound'){
-                playSounds(data.text);
-                $('#history ul').prepend('<li> ' + data.user + ' : ' + data.text + '</li>');
+        peerConn[peerConn.length - 1].on('data', function(data){
+
+            if(isSession){
+                checkAccuracy(data);
+            }
+            
+            // console.log(data);
+            if(data.type === 'sound') {
+                makeSounds(buffers[data.key]);
+                $('#history ul').prepend('<li> ' + data.user + ' : ' + data.key + ' (' + data.inst + ')</li>');
             }
             else if(data.type == 'info'){
-                if(data.text == 'Ready?') $("#session-answer").show();
+                if(data.text == 'Ready?') $("#session-response").show();
                 if(data.text == 'OK!') setPlayerList(data.user);
+                if(data.text == 'heartbeat') sendMsg('info','alive');
+                if(data.text == 'alive') getTransferLag(data);
             }
         });
     // }
@@ -156,7 +283,7 @@ function dataChannelEvent(conn){
 $(function(){
     $("#sound-buttons").hide();
     $("#session-call").hide();
-    $("#session-answer").hide();
+    $("#session-response").hide();
 
     // PCスマホ間のver違いによるエラー対策
     util.supports.sctp = false;
@@ -170,35 +297,42 @@ $(function(){
     });
 
     $('#session-call').click(function(event) {
-        sendMsg('info', 'Ready?');
+       sendMsg('info', 'Ready?');
+        $('#session-call').text('募集中...');
+        $('#session').append('join : ');  
     });
 
-    $('#session-answer').click(function(event) {
+    $('#session-response').click(function(event) {
         sendMsg('info', 'OK!');
+        $('#session-response').hide();
+        // countdown = setTimeout('startMusic()',1000);
     });
  
-    // beep[mouse_down] = function(event) {
-    //     sendMsg('sound', 'beep');
-    //     $('#history ul').prepend('<li> you : beep</li>');
-    // };
-
+    $('#music-start').click(function(event) {
+        // // 音楽用のタイマー
+        // timer = window.setInterval(checkSound, interval);
+        // checkSound();
+        startMusic();
+    });
+ 
     soundsHh[mouse_down] = function(event) {
-        sendMsg('sound', 'Hi-hat');
+        sendMsg('sound', 'hh', 'drum', 'hh');
         $('#history ul').prepend('<li> you : Hi-hat</li>');
     };
     soundsSd[mouse_down] = function(event) {
-        sendMsg('sound', 'Snare Drum');
+        sendMsg('sound', 'sd', 'drum', 'sd');
         $('#history ul').prepend('<li> you : Snare Drum</li>');
     };
     soundsBd[mouse_down] = function(event) {
-        sendMsg('sound', 'Bass Drum');
+        sendMsg('sound', 'bd', 'drum', 'bd');
         $('#history ul').prepend('<li> you : Bass Drum</li>');
     };
-    soundsCy[mouse_down] = function(event) {
-        sendMsg('sound', 'Cymbal');
-        $('#history ul').prepend('<li> you : Cymbal</li>');
-    };
-
+    // soundsCy[mouse_down] = function(event) {
+    //     sendMsg('sound', 'cy', 'drum', 'cy');
+    //     $('#history ul').prepend('<li> you : Cymbal</li>');
+    // };
+    
     //ユーザリスト取得開始
     setInterval(getUserList, 2000);
+    setInterval(heartBeat, 20000);
 });

@@ -1,0 +1,180 @@
+html,body{
+  font-family: 'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  background-color: #333;
+}
+
+$color-hh: #2980b9;
+$color-bd: #e74c3c;
+$color-sd: #f1c40f;
+
+
+.drum{
+  max-width: 320px;
+  margin: 0 auto;
+}
+.drum-item{
+  position: relative;
+  width: 300px;
+  line-height: 300px;
+  border-radius: 50%;
+  text-align: center;
+  border: 2px solid transparent;
+  margin: 0 auto;
+  color: #fff;
+  font-size: 30px;
+  text-shadow: -1px -1px 0 rgba(0,0,0,1);
+
+  // box-shadow:0px 1px 0px #1b446d,
+  //            0px 2px 0px #1b446d,
+  //            0px 3px 0px #1b446d,
+  //            0px 4px 0px #1b446d,
+  //            0px 5px 0px #1b446d,
+  //            0px 6px 0px #1b446d,
+  //            0px 7px 0px #1b446d,
+  //            2px 7px 3px rgba(0,0,0,0.3),
+  //            0px 1px 0px rgba(255,255,255,0.5) inset,
+  //            0px -1px 0px rgba(255,255,255,0.2) inset;
+
+  // box-shadow: 2px 2px 0 2px rgba(0,0,0,.3);
+  &.touched{
+    box-shadow: -2px -2px 0 2px rgba(0,0,0,.3);
+  }
+
+
+  $onpu: 150px;
+  &:before{
+    position: absolute;
+    content: "♪";
+    display: block;
+    font-size: $onpu;
+    width: $onpu;
+    height: $onpu;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    line-height: 1;
+    color: #fff;
+    opacity: 0.1;
+    text-shadow: -1px -1px 0 rgba(0,0,0,1);
+  }
+
+  .drum-effect{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    color: inherit;
+    border: 2px solid transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+  }
+
+}
+.drum-hh{
+  border-color: $color-hh;
+  .drum-effect{
+    border-color: $color-hh;
+  }
+}
+.drum-bd{
+  border-color: $color-bd;
+    .drum-effect{
+      border-color: $color-bd;
+    }
+}
+.drum-sd{
+  border-color: $color-sd;
+    .drum-effect{
+      border-color: $color-sd;
+    }
+}
+
+.anime-push{
+  animation: push 300ms ease 0 1;
+}
+
+@keyframes push{
+  0%{
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100%{
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.drum-tabs{
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 320px;
+}
+.drum-tab{
+  list-style: none;
+  width: 100px;
+  line-height: 50px;
+  text-align: center;
+  color: #fff;
+  display: inline-block;
+  position: relative;
+  background-color: #2E2E2E;
+  margin: 0;
+  padding: 0;
+  &.active{
+    &:before{
+      position: absolute;
+      content:"";
+      display: block;
+      border-bottom: 2px solid transparent;
+      bottom: 100%;
+      left: 0;
+      width: 320px;
+    }
+  }
+
+  &.drum-tab-hh{
+    width: 106px;
+    &.active{
+      background-color: $color-hh;
+      &:before{
+        border-color: $color-hh;
+      }
+    }
+  }
+  &.drum-tab-bd{
+    width: 108px;
+    &.active{
+      background-color: $color-bd;
+      &:before{
+        left: -106px;
+        border-color: $color-bd;
+      }
+    }
+  }
+  &.drum-tab-sd{
+    width: 106px;
+    &.active{
+      background-color: $color-sd;
+      &:before{
+        left: -214px;
+        border-color: $color-sd;
+      }
+    }
+  }
+}
+
+.drum-content{
+  padding: 20px 10px;
+  display: none;
+  &.active{
+    display: block;
+  }
+}
+
