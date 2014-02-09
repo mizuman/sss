@@ -7,6 +7,7 @@
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <!-- <link rel="stylesheet" href="css/font-awesome.min.css"> -->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -18,46 +19,69 @@
 </head>
 <body>
 <section class="drum">
+    <!--
+    <div class="container">
+        <div class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="./index.html">Second Screen Session</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.html">Home</a></li>
+                    <li class="active"><a href="./drum.html">Drum</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+ -->
+<!-- 	<h2>test page</h2>
+ -->
+
     <ul class="drum-tabs">
-        <li data-index="0" class="drum-tab drum-tab-hh active" id="tab-hh">Hi-Hat
-        <li data-index="1" class="drum-tab drum-tab-bd" id="tab-bd">Bass Drum
-        <li data-index="2" class="drum-tab drum-tab-sd" id="tab-sd">Snare
+        <li data-index="0" class="drum-tab drum-tab-hh active">Hi-Hat
+        <li data-index="1" class="drum-tab drum-tab-bd">Bass Drum
+        <li data-index="2" class="drum-tab drum-tab-sd">Snare
     </ul>
     <section data-index="0" class="drum-content drum-content-hh active">
         <div class="drum-item drum-hh">
             Hi-Hat
-            <div class="drum-effect" id="sounds-hh"></div>
+            <div class="drum-effect"></div>
         </div>
     </section>
     <section data-index="1" class="drum-content drum-content-bd">
         <div class="drum-item drum-bd">
             Bass Drum
-            <div class="drum-effect" id="sounds-bd"></div>
+            <div class="drum-effect"></div>
         </div>
     </section>
     <section data-index="2" class="drum-content drum-content-sd">
         <div class="drum-item drum-sd">
             Snare
-            <div class="drum-effect" id="sounds-sd"></div>
+            <div class="drum-effect"></div>
         </div>
     </section>
 
-    <p id="session-info">
-        あなたのPeerID：<span id="my-id">...</span><br>
+    <div class="drum-connectWrapper">
+        <select id="contactlist" name="contact"></select>
+        <button type="button" class="drum-connectBtn" id="make-connection">Connect</button>
+    </div>
+    <p>
+<!--         あなたのPeerID：<span id="my-id">...</span><br>
         チャット中のPeerID：<span id="their-id"></span><br>
-        チャット可能なPeerID：<select id="contactlist" name="contact"></select>
-        <button type="button" id="make-connection">接続</button>
+        チャット可能なPeerID： -->
     </p>
 
-    <div id="session">
-        <button type="button" id="session-response">セッション参加！</button>
-    </div>
-
     <div id="sound-buttons">
-        <!-- <img class="col-xs-6 col-md-4" id="sounds-hh" src="http://dummyimage.com/200x150/eee/0010ee&text=Hi-hat"> -->
-        <!-- <img class="col-xs-6 col-md-4" id="sounds-sd" src="http://dummyimage.com/200x150/eee/0010ee&text=Snare+Drum"> -->
-        <!-- <img class="col-xs-6 col-md-4" id="sounds-bd" src="http://dummyimage.com/200x150/eee/0010ee&text=Bass+Drum"> -->
-        <!-- <img class="col-xs-6 col-md-4" id="sounds-cy" src="http://dummyimage.com/200x150/eee/0010ee&text=Cymbal"> -->
+        <img class="col-xs-6 col-md-4" id="sounds-hh" src="http://dummyimage.com/200x150/eee/0010ee&text=Hi-hat">
+        <img class="col-xs-6 col-md-4" id="sounds-sd" src="http://dummyimage.com/200x150/eee/0010ee&text=Snare+Drum">
+        <img class="col-xs-6 col-md-4" id="sounds-bd" src="http://dummyimage.com/200x150/eee/0010ee&text=Bass+Drum">
+        <img class="col-xs-6 col-md-4" id="sounds-cy" src="http://dummyimage.com/200x150/eee/0010ee&text=Cymbal">
     </div>
 
     <div id="history">
@@ -68,14 +92,11 @@
     <script type="text/javascript">
         // ユーザ名をランダムに生成
         var userName = 'drum' + Math.floor(Math.random() * 100);
-        var myInst = 'drum';
-        var myKey = 'hh';
     </script>
 
     <script src="./js/jquery-2.1.0.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
 	<script src="https://skyway.io/dist/0.3/peer.js"></script>
-    <script src="./js/funky.js"></script>
 	<script src="./js/script.js"></script>
 
 <script>

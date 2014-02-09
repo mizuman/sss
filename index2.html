@@ -6,8 +6,9 @@
 	<title>test</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" type="text/css" href="./css/style.css"> -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -18,9 +19,8 @@
 </head>
 <body>
 
-    <!-- メニューバー -->
+<!--
     <div class="container">
-        <!-- Static navbar -->
         <div class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -36,26 +36,53 @@
                     <li class="active"><a href="./index.html">Home</a></li>
                     <li><a href="./drum.html">Drum</a></li>
                 </ul>
-            </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div> -->
+<section class="sss-wrapper">
+    <header class="sss-header">
+        <h1 class="sss-title">Second Screen Session</h1>
+        <p class="sss-subTitle">Catch the beat</p>
+    </header>
+
+    <div class="sss-unitInfo host">
+        <p class="sss-unitInfo-id">host100</p>
+        <div class="sss-unitInfo-rowRight">
+            <div id="music" class="sss-unitInfo-btnWrapper">
+                <button class="sss-unitInfo-btn" id="music-start">Start Music</button>
+            </div>
+            <div id="session" class="sss-unitInfo-btnWrapper">
+                <button class="sss-unitInfo-btn" id="session-call">Start Session</button>
+            </div>
         </div>
     </div>
 
-	<h2>test page</h2>
+    <div class="sss-clients">
+        <div class="sss-unitInfo client unit-hh">
+            <p class="sss-unitInfo-id">drum01</p>
+            <p class="sss-unitInfo-inst">Drums</p>
+            <p class="sss-unitInfo-type">Hi-Hat</p>
+            <span class="sss-unitInfo-arrow"></span>
+        </div>
+        <div class="sss-unitInfo client unit-bd">
+            <p class="sss-unitInfo-id">drum02</p>
+            <p class="sss-unitInfo-inst">Drums</p>
+            <p class="sss-unitInfo-type">Bass Drum</p>
+        </div>
+        <div class="sss-unitInfo client unit-sd">
+            <p class="sss-unitInfo-id">drum03</p>
+            <p class="sss-unitInfo-inst">Drums</p>
+            <p class="sss-unitInfo-type">Snare</p>
+        </div>
+    </div>
+
 
     <p>
-    	あなたのPeerID：<span id="my-id">...</span><br>
-    	チャット中のPeerID：<span id="their-id"></span><br>
-    	チャット可能なPeerID：<select id="contactlist" name="contact"></select>
-    	<button type="button" id="make-connection">接続</button>
+        あなたのPeerID：<span id="my-id">...</span><br>
+        チャット中のPeerID：<span id="their-id"></span><br>
+        チャット可能なPeerID：<select id="contactlist" name="contact"></select>
+        <button type="button" id="make-connection">接続</button>
     </p>
-
-    <div id="session">
-        <button type="button" id="session-call">セッション開始！</button>
-    </div>
-
-    <div id="music">
-        <button id="music-start">Musicスタート！</button>
-    </div>
 
     <div id="sound-buttons">
         <img class="" id="sounds-hh" src="http://dummyimage.com/100x40/fefefe/0010ee&text=Hi-hat" alt="Hi-hat">
@@ -69,17 +96,16 @@
         </ul>
     </div>
 
+</section>
     <script type="text/javascript">
         // ユーザ名をランダムに生成
         var userName = 'host' + Math.floor(Math.random() * 100);
-        var myInst = 'host';
-        var myKey = 'host';
     </script>
 
     <script src="./js/jquery-2.1.0.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
-	<script src="https://skyway.io/dist/0.3/peer.js"></script>
-	<script src="./js/funky.js"></script>
-	<script src="./js/script.js"></script>
+	<!-- // <script src="https://skyway.io/dist/0.3/peer.js"></script> -->
+	<!-- // <script src="./js/rhythm.js"></script> -->
+	<!-- // <script src="./js/script.js"></script> -->
 </body>
 </html>
